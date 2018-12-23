@@ -12,7 +12,7 @@ int f_width = 12;
 int f_height = 18;
 
 // Screen Dimensions
-int s_width = 480;
+int s_width = 680;
 int s_height = 720;
 
 // Field array and shape array
@@ -92,8 +92,8 @@ int main()
 	text_font.loadFromFile("./cour.ttf");
 	sf::Text text_score;
 	text_score.setFont(text_font);
-	text_score.setPosition(sf::Vector2f(40, 0));
-	text_score.setCharacterSize(50);
+	text_score.setPosition(sf::Vector2f(500, 0));
+	text_score.setCharacterSize(25);
 	text_score.setFillColor(sf::Color::White);
 
 	// Random Number Generation
@@ -271,6 +271,19 @@ int main()
 					window.draw(cell);
 				}
 
+		// Draw Hold Piece
+		if (hold != -1)
+			for (int x = 0; x < 4; x++)
+				for (int y = 0; y < 4; y++)
+					if (tetromino[hold][Rotate(x, y, 0)] == L'X')
+					{
+						sf::RectangleShape cell;
+						cell.setSize(sf::Vector2f(40, 40));
+						cell.setPosition(sf::Vector2f((12 + x) * 40, (1 + y) * 40));
+						cell.setFillColor(c[hold + 1]);
+						window.draw(cell);
+					}
+
 		if (!lines.empty())
 		{
 			sf::sleep(sf::milliseconds(400));
@@ -288,7 +301,7 @@ int main()
 		}
 
 		// Draw score
-		text_score.setString(to_string(score));
+		text_score.setString("SCORE: " + to_string(score));
 		window.draw(text_score);
 
 		window.display();
