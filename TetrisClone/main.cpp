@@ -17,7 +17,7 @@ int s_height = 720;
 
 // Field array and shape array
 unsigned char *field = nullptr;
-sf::RectangleShape* cells = nullptr;
+sf::Sprite* cells = nullptr;
 
 // Values for special cells
 const int BORDER = 9;
@@ -27,6 +27,8 @@ const int EMPTY = 0;
 // Colour map for tetrominos
 sf::Color c[10] = {sf::Color::Black, sf::Color::Cyan, sf::Color::Blue, sf::Color(255, 165, 0),
 sf::Color::Yellow, sf::Color::Green, sf::Color::Magenta, sf::Color::Red, sf::Color::Transparent, sf::Color::White };
+
+sf::Sprite s[10];
 
 int Rotate(int x, int y, int r)
 {
@@ -75,7 +77,7 @@ int main()
 
 	// Create field array
 	field = new unsigned char[f_width * f_height];
-	cells = new sf::RectangleShape[f_width * f_height];
+	cells = new sf::Sprite[f_width * f_height];
 	
 	// Create line vector
 	vector<int> lines;
@@ -86,6 +88,9 @@ int main()
 
 	// Setup window
 	sf::RenderWindow window(sf::VideoMode(s_width, s_height), "TetrisClone");
+
+	sf::Texture textures;
+	textures.loadFromFile("./tetrominosheet.png");
 
 	// Text variables
 	sf::Font text_font;
@@ -133,7 +138,7 @@ int main()
 		for (int y = 0; y < f_height; y++)
 		{
 			field[y * f_width + x] = (x == 0 || x == f_width - 1 || y == f_height - 1) ? BORDER : EMPTY;
-			cells[y * f_width + x].setSize(sf::Vector2f(40, 40));
+			cells[y * f_width + x].setTexture(textures);
 			cells[y * f_width + x].setPosition(x * 40, y * 40);
 		}
 	
@@ -252,7 +257,7 @@ int main()
 		for (int x = 0; x < f_width; x++)
 			for (int y = 0; y < f_height; y++)
 			{
-				cells[y * f_width + x].setFillColor(c[field[y * f_width + x]]);
+				cells[y * f_width + x].setTextureRect(sf::IntRect(field[y * f_width + x] * 40, 0, 40, 40));
 				window.draw(cells[y * f_width + x]);
 			}
 
@@ -261,10 +266,10 @@ int main()
 			for (int y = 0; y < 4; y++)
 				if (tetromino[c_piece][Rotate(x, y, c_rotation)] == L'X')
 				{
-					sf::RectangleShape cell;
-					cell.setSize(sf::Vector2f(40, 40));
+					sf::Sprite cell;
+					cell.setTexture(textures);
 					cell.setPosition(sf::Vector2f((c_x + x) * 40, (c_y + y) * 40));
-					cell.setFillColor(c[c_piece + 1]);
+					cell.setTextureRect(sf::IntRect((c_piece + 1) * 40, 0, 40, 40));
 					window.draw(cell);
 				}
 
@@ -274,10 +279,10 @@ int main()
 				for (int y = 0; y < 4; y++)
 					if (tetromino[hold][Rotate(x, y, 0)] == L'X')
 					{
-						sf::RectangleShape cell;
-						cell.setSize(sf::Vector2f(40, 40));
+						sf::Sprite cell;
+						cell.setTexture(textures);
 						cell.setPosition(sf::Vector2f((12 + x) * 40, (2 + y) * 40));
-						cell.setFillColor(c[hold + 1]);
+						cell.setTextureRect(sf::IntRect((hold + 1) * 40, 0, 40, 40));
 						window.draw(cell);
 					}
 
