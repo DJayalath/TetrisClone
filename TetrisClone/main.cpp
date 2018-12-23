@@ -136,7 +136,7 @@ int main()
 			cells[y * f_width + x].setSize(sf::Vector2f(40, 40));
 			cells[y * f_width + x].setPosition(x * 40, y * 40);
 		}
-
+	
 	// Print Controls
 	std::cout << "----- CONTROLS -----" << std::endl;
 	std::cout << "Left/Right/Down: Move Tetromino" << std::endl;
