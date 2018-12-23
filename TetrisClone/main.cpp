@@ -91,10 +91,15 @@ int main()
 	sf::Font text_font;
 	text_font.loadFromFile("./cour.ttf");
 	sf::Text text_score;
+	sf::Text text_speed;
 	text_score.setFont(text_font);
+	text_speed.setFont(text_font);
 	text_score.setPosition(sf::Vector2f(500, 0));
+	text_speed.setPosition(sf::Vector2f(500, 30));
 	text_score.setCharacterSize(25);
+	text_speed.setCharacterSize(25);
 	text_score.setFillColor(sf::Color::White);
+	text_speed.setFillColor(sf::Color::White);
 
 	// Random Number Generation
 	random_device rd; // Initialise seed engine
@@ -135,7 +140,7 @@ int main()
 	// Print Controls
 	std::cout << "----- CONTROLS -----" << std::endl;
 	std::cout << "Left/Right/Down: Move Tetromino" << std::endl;
-	std::cout << "Up/X: Hold/Retrieve Tetromino" << std::endl;
+	std::cout << "Up: Hold/Retrieve Tetromino" << std::endl;
 	std::cout << "Z: Rotate Tetromino" << std::endl;
 
 	while (window.isOpen())
@@ -167,34 +172,26 @@ int main()
 			rotate_hold = false;
 
 		// Hold piece
-		if (hold == -1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{			
 			if (!hold_latch)
 			{
 				// Hold current piece
-				hold = c_piece;
+				int temp_hold = c_piece;
 
 				// Generate new piece
-				c_piece = uni(rng);
+				c_piece = (hold == -1) ? uni(rng) : hold;
 				c_rotation = 0;
 				c_x = f_width / 2;
 				c_y = 0;
+
+				hold = temp_hold;
 			}
+
 			hold_latch = true;
 		}
 		else
 			hold_latch = false;
-
-		// Release piece
-		if (hold != -1 && sf::Keyboard::isKeyPressed(sf::Keyboard::X))
-		{
-			c_piece = hold;
-			c_rotation = 0;
-			c_x = f_width / 2;
-			c_y = 0;
-
-			hold = -1;
-		}
 
 		if (force_down)
 		{
@@ -279,7 +276,7 @@ int main()
 					{
 						sf::RectangleShape cell;
 						cell.setSize(sf::Vector2f(40, 40));
-						cell.setPosition(sf::Vector2f((12 + x) * 40, (1 + y) * 40));
+						cell.setPosition(sf::Vector2f((12 + x) * 40, (2 + y) * 40));
 						cell.setFillColor(c[hold + 1]);
 						window.draw(cell);
 					}
@@ -300,9 +297,11 @@ int main()
 			lines.clear();
 		}
 
-		// Draw score
+		// Draw score and speed
 		text_score.setString("SCORE: " + to_string(score));
+		text_speed.setString("SPEED: " + to_string(21 - speed));
 		window.draw(text_score);
+		window.draw(text_speed);
 
 		window.display();
 	}
